@@ -64,6 +64,27 @@
             </div>
 
             <div class="mb-3">
+                <label for="technologies" class="form-label">Select Technologies</label>
+                <select multiple 
+                class="form-select form-select-lg" 
+                name="technologies[]" 
+                id="technologies">
+                
+                    <option value="">Seleziona</option>
+                    
+                    @forelse ($technologies as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    
+                        @empty
+
+                        <option value="">Tecnologie non specificate</option>
+
+                    @endforelse
+
+                </select>
+            </div>
+
+            <div class="mb-3">
                 <label for="descriptions" class="form-label">Description</label>
                 <textarea 
                     class="form-control 

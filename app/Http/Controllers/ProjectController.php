@@ -47,8 +47,10 @@ class ProjectController extends Controller
         $slug = Project::generateSlug($request->title);
         $val_data['slug'] = $slug;
         
+
         $val_data['descriptions'] = $request->input('descriptions');
         $val_data['languages'] = $request->input('languages');
+
 
         if($request->hasFile('thumb')){
             $img_path=Storage::disk('public')->put('project_images', $request->thumb);
@@ -60,6 +62,11 @@ class ProjectController extends Controller
         // $val_data['thumb'] = $request->input('thumb');
 
         $new_project = Project::create($val_data);
+
+
+        if( $request->has('technologies') ){
+            $new_project->technologies()->attach( $request->technologies );
+        }
 
         return redirect()->route('dashboardprojects.index');
     }
@@ -78,6 +85,8 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         $types = Type::all();
+
+        $technologies = Technology::all();
         
         return view('pages.projects.edit', compact('project', 'types', 'technologies'));
     }
@@ -107,6 +116,10 @@ class ProjectController extends Controller
 
         $project->update($val_data);
 
+        if( $request->has('technologies') ){
+            $project->technologies()->sync( $request->technologies );
+        }
+
         return redirect()->route('dashboardprojects.index');
     }
 
@@ -115,6 +128,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+
+        $project->technologies()->sync([]);
+
         if( $project->thumb ){
             Storage::delete($project->thumb);
         }
